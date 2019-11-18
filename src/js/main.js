@@ -1,7 +1,8 @@
-import makeFloridaManTan from "./floridaMan.js";
-import searchAndDestroyPaywall from "./paywallCrusher.js";
-import yoTheHeader from "./headerYo.js";
-import removeAds from "./adRemover.js";
+import { 
+  removeAds,
+  destroyPaywall,
+  floridizeTrump, 
+  enhanceSubtitles} from "./features/index.js";
 
 export function main() {
 
@@ -23,13 +24,13 @@ export function main() {
 function executeOptions({payWallOption, adRemovalOption, trumpOption, trumpNameOption, yoHeaderOption, yoSuffixOption}) {
 
   if (payWallOption)
-    searchAndDestroyPaywall();
+    destroyPaywall();
 
   if (yoHeaderOption)
-    yoTheHeader(yoSuffixOption);
+    enhanceSubtitles(yoSuffixOption);
 
   if (trumpOption)
-    makeFloridaManTan(trumpNameOption);
+    floridizeTrump(trumpNameOption);
 
   if (adRemovalOption)
     removeAds();

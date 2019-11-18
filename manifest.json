@@ -13,6 +13,7 @@
     "114": "assets/nytimes_icon_114x114.png"
   },
   "web_accessible_resources": [
+    "src/js/features/*.js",
     "src/js/*.js"
   ],
   "permissions": ["storage"],
