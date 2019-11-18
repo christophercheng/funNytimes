@@ -53,8 +53,8 @@ function restore_options() {
     payWallOption.checked = items.payWallOption;
     adRemovalOption.checked = items.adRemovalOption;
     trumpOption.checked = items.trumpOption;
-    trumpNameOption.value = items.trumpNameOption.slice(0,20).toLowerCase();
-    yoSuffixOption.value = items.yoSuffixOption.slice(0,20).toLowerCase();
+    trumpNameOption.value = items.trumpNameOption.slice(0,25).toLowerCase();
+    yoSuffixOption.value = items.yoSuffixOption.slice(0,25).toLowerCase();
     yoHeaderOption.checked = items.yoHeaderOption;
     closeButton.addEventListener("click", function() {save_options()});
     closeButton.removeAttribute('disabled');
