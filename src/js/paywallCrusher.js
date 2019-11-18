@@ -1,12 +1,10 @@
 import * as config from "./config.js";
-import documentCache from "./documentSifter.js";
+import documentCache, {NODE_BODY, NODE_ARTICLE, NODE_PAYWALL} from "./documentSifter.js";
 
 export default function searchAndDestroyPaywall() 
 {
   if (documentCache.isHomePage())
     return; // don't remove ads on home page right now
-
-  const {body,article} = documentCache.getDocumentNodes({body: true,article: true});
 
   (function rinseAndRepeat(options={}) { 
     let {
@@ -15,16 +13,21 @@ export default function searchAndDestroyPaywall()
       msBetweenAttempts = config.MS_BETWEEN_SEARCH_ATTEMPTS
     } = options;
 
-    if (numPreviousAttempts++ >= maxSearchAttempts)
+    if (numPreviousAttempts >= maxSearchAttempts)
       return;
 
-    wait((numPreviousAttempts === 1) ? 0 : msBetweenAttempts)
+    wait((numPreviousAttempts === 0) ? 0 : msBetweenAttempts)
     .then(function() {
-      const paywall = searchForPayWall();
-      if (paywall)
-        destroyPaywall({paywall,body,article});
+      let document = documentCache.getDocumentNodes({[NODE_PAYWALL]: true});
+      if (NODE_PAYWALL in document){
+        document = documentCache.getDocumentNodes({[NODE_BODY]: true,[NODE_ARTICLE]: true});
+        destroyPaywall(document);
+      }
       else 
-        rinseAndRepeat(options);
+        rinseAndRepeat({
+          ...options,
+          numPreviousAttempts: numPreviousAttempts + 1
+        });
     });    
   })();
 }
@@ -36,10 +39,6 @@ function destroyPaywall({
 }) {
   paywall.parentNode.removeChild(paywall);
   body.prepend(article);
-}
-
-function searchForPayWall() {
-  return document.getElementById("gateway-content");
 }
 
 export function wait(msTime) {
