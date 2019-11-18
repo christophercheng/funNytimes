@@ -5,7 +5,7 @@ This is a chrome extension that allows you to read unlimited Nytimes articles wi
 It takes advantage of a nytimes.com loophole where the content of articles are completely downloaded, even if a paywall is erected.
 
 ## How It Works
-Upon activation (only on nytimes website), the paywall (document node with a certain id) is searched for and removed (via the brower's document API.  Then the article is found and placed at the top of the body.
+Upon activation (only on nytimes website), the paywall (document node with a certain id) is searched for and removed (via the brower's document API).  Then the article is found and placed at the top of the body.
 Just in case the paywall is dynamically added after initial document load, the paywall node will be searched for a few times after page load until it is found.
 
 ## Other Fun Options.
@@ -19,4 +19,4 @@ All content modifications can be changed.  For example, rather than replace 'Don
 Download the funNytimes directory to your local computer.  Open Chrome browser to 'chrome://extensions'.  Enabled Developer Mode (find toggle switch on top righthand corner).  Afterward, a 'Load Unpacked' button should appear on the top lefthand corner.  Click it.  A file dialog will appear.  Select the funNytimes directory you downloaded previously.  That's it.  You should see a new extension icon appear that looks like the Nytimes logo with a diagonal slash.
 
 ## Distribution
-This is intended only as a educational code learning exercise and is not meant for distribution.  Nytimes.com articles can be read in umlimited fashion if you continually clear your browser's cookies.  This just provides a more convenient automated mechanism.
+This is intended only as an educational code learning exercise and is not meant for distribution.  Nytimes.com articles can be read in umlimited fashion if you continually clear your browser's cookies.  This just provides a more convenient, automated mechanism.
