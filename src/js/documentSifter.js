@@ -8,35 +8,26 @@ export const NODE_PAYWALL="paywall"
 
 export default (function() {
 
-  let currentPage=window.location.href;
+  let currentPage;
   let cachedDocumentData = {};
 
-  function resetCache() {
-    currentPage = window.location.href;
-    cachedDocumentData = {};
-  }
+  function getDocumentData(requestedNodes={}) {
 
-  function isHomePage() {
-    return !(currentPage.includes('.html'));
-  }
+    (function resetCacheIfNewPage() {
+      if (currentPage != window.location.href) {
+        currentPage = window.location.href,
+        cachedDocumentData = { isArticlePage: currentPage.includes('.html') };
+      }
+    })();  
 
-  function getDocumentNodes(requestedNodes) {
-    if (currentPage !== window.location.href)
-      resetCache();
-    
-    const isCatgoryPage = isHomePage();
     Object.keys(requestedNodes).forEach(function(requestedNode) {
-      cachedDocumentData = getDocumentData(requestedNode, cachedDocumentData, isCatgoryPage);
+      cachedDocumentData = getUpdatedCacheWith(requestedNode, cachedDocumentData);
     });
+    
     return cachedDocumentData; // return everything and let the caller destructure and get what the way
   }
   
-  return {
-    isHomePage,
-    getDocumentNodes,
-  };
-
-
+  return getDocumentData;
 })();
 
 const FetchFnMapper = {
@@ -49,13 +40,13 @@ const FetchFnMapper = {
   [NODE_HEADER_TITLES]: fetchHeaderTitles
 }
 
-// getDocumentData always fetches data directly from document // and not cache
-function getDocumentData(requestedNode, cachedData, isHomePage=false) {
-  if (!(requestedNode in cachedData))
-    return FetchFnMapper[requestedNode](cachedData, isHomePage)
-  return cachedData;
-}
 
+// getDocumentData always fetches data directly from document // and not cache
+function getUpdatedCacheWith(requestedNode, cachedData) {
+  return (requestedNode in cachedData)
+    ? cachedData
+    : FetchFnMapper[requestedNode](cachedData);
+}
 
 function fetchBody(cachedData) {
   return {
@@ -65,7 +56,7 @@ function fetchBody(cachedData) {
 }
 
 function fetchArticle(cachedData) {
-  const updatedCache = getDocumentData(NODE_BODY, cachedData);
+  const updatedCache = getUpdatedCacheWith(NODE_BODY, cachedData);
   return {
     ...updatedCache,
     [NODE_ARTICLE]: document.getElementsByTagName(NODE_ARTICLE)[0]
@@ -79,33 +70,45 @@ function fetchPaywall(cachedData) {
   }
 }
 
-function fetchParagraphs(cachedData, isHomePage=false) {
-  const scopeNode = isHomePage ? NODE_BODY : NODE_ARTICLE;
-  const updatedCache = getDocumentData(scopeNode, cachedData, isHomePage);
+function fetchParagraphs(cachedData) {
+  const {isArticlePage} = cachedData;
+  const scopeNode = isArticlePage ? NODE_ARTICLE : NODE_BODY;
+  const updatedCache = getUpdatedCacheWith(scopeNode, cachedData);
   let paragraphs = updatedCache[scopeNode].getElementsByTagName('p');   
-  let ads = []; // might as well store ads in the process
-  if (paragraphs) {
-    paragraphs = Array.prototype.filter.call(paragraphs, p => {
+  let ads = []; // might as well store ads in the process on article pages
+
+  if (paragraphs && isArticlePage) {
+    [paragraphs, ads] = separateOutAdsFrom(paragraphs);
+  }
+
+  return {
+    ...updatedCache,
+    [NODE_PARAGRAPHS]: paragraphs,
+    [NODE_ADS]: ads
+  };
+
+  function separateOutAdsFrom(paragraphs) {
+    const ads = [];
+    const contentParagraphs = Array.prototype.filter.call(paragraphs, p => {
       if (p.innerHTML.toLowerCase() === "advertisement") {
         ads.push(p.parentNode.parentNode);
         return false;
       }
       return true;
     });
-    updatedCache[NODE_PARAGRAPHS] = paragraphs;
-    updatedCache[NODE_ADS]= ads;
+    return [contentParagraphs, ads];
   }
-  return updatedCache;
 };
 
-function fetchAds(cachedData, isHomePage=false) {
-  return fetchParagraphs(cachedData, isHomePage);
+function fetchAds(cachedData) {
+  return fetchParagraphs(cachedData);
 };
 
-function fetchHeaderTitles(cachedData, isHomePage= false) {
+function fetchHeaderTitles(cachedData) {
   let headerTitles = [];
-  let updatedCache = getDocumentData(NODE_BODY, cachedData, isHomePage);
-  if (!isHomePage) {
+  let updatedCache = getUpdatedCacheWith(NODE_BODY, cachedData);
+
+  if (updatedCache.isArticlePage) {
     const sections = updatedCache[NODE_BODY].getElementsByTagName('section');
     if (sections) {
       const goodSections = Array.prototype.filter.call(sections, function(section) {
@@ -122,7 +125,7 @@ function fetchHeaderTitles(cachedData, isHomePage= false) {
   }
   else {
     const h1s = document.getElementsByTagName('h1');
-    headerTitles = [...Array.from(h1s)];
+    headerTitles = Array.from(h1s);
   }
   return {
     ...updatedCache,
@@ -130,13 +133,15 @@ function fetchHeaderTitles(cachedData, isHomePage= false) {
   };
 }
 
-function fetchTitleSpans(cachedData, isHomePage=false) {
+function fetchTitleSpans(cachedData) {
   const titleSpans = [];
-  const titleElement = isHomePage ? "h2" : "h1";
+  const {isArticlePage} = cachedData;
+  const titleElement = isArticlePage ? "h1" : "h2";
+  const scopeNode = isArticlePage ? NODE_ARTICLE : NODE_BODY;
 
-  const scopeNode = isHomePage ? NODE_BODY : NODE_ARTICLE;
-  let updatedCache = getDocumentData(scopeNode, cachedData, isHomePage);
+  let updatedCache = getUpdatedCacheWith(scopeNode, cachedData);
   const titles = updatedCache[scopeNode].getElementsByTagName(titleElement);
+
   for (let title of titles) {
     const spans = title.getElementsByTagName('span');
     if (spans.length) {

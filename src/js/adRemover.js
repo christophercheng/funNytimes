@@ -1,10 +1,10 @@
-import documentCache from "./documentSifter.js";
+import getDocumentData from "./documentSifter.js";
 
 export default function removeAds() {
-  if (documentCache.isHomePage())
+  if (!getDocumentData().isArticlePage)
     return; // don't remove ads on home page right now
 
-  const {ads} = documentCache.getDocumentNodes({ads: true});
+  const {ads} = getDocumentData({ads: true});
 
   for (let ad of ads) 
     ad.remove();

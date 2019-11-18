@@ -1,7 +1,7 @@
-import documentCache from "./documentSifter.js";
+import getDocumentData from "./documentSifter.js";
 
 export default function yoTheHeader(suffix) {
-  const {headerTitles} = documentCache.getDocumentNodes({headerTitles: true});
+  const {headerTitles} = getDocumentData({headerTitles: true});
 
   if (!headerTitles.length)
     return;

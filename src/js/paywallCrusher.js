@@ -1,9 +1,9 @@
 import * as config from "./config.js";
-import documentCache, {NODE_BODY, NODE_ARTICLE, NODE_PAYWALL} from "./documentSifter.js";
+import getDocumentData, {NODE_BODY, NODE_ARTICLE, NODE_PAYWALL} from "./documentSifter.js";
 
 export default function searchAndDestroyPaywall() 
 {
-  if (documentCache.isHomePage())
+  if (!getDocumentData().isArticlePage)
     return; // don't remove ads on home page right now
 
   (function rinseAndRepeat(options={}) { 
@@ -18,12 +18,7 @@ export default function searchAndDestroyPaywall()
 
     wait((numPreviousAttempts === 0) ? 0 : msBetweenAttempts)
     .then(function() {
-      let document = documentCache.getDocumentNodes({[NODE_PAYWALL]: true});
-      if (NODE_PAYWALL in document){
-        document = documentCache.getDocumentNodes({[NODE_BODY]: true,[NODE_ARTICLE]: true});
-        destroyPaywall(document);
-      }
-      else 
+      if (!findAndDestroyPaywall())
         rinseAndRepeat({
           ...options,
           numPreviousAttempts: numPreviousAttempts + 1
@@ -32,13 +27,14 @@ export default function searchAndDestroyPaywall()
   })();
 }
 
-function destroyPaywall({
-  paywall,
-  body,
-  article
-}) {
+function findAndDestroyPaywall() {
+  let {paywall} = getDocumentData({[NODE_PAYWALL]: true});
+  if (!paywall)
+    return false;
   paywall.parentNode.removeChild(paywall);
+  const {body, article} = getDocumentData({[NODE_BODY]: true,[NODE_ARTICLE]: true});
   body.prepend(article);
+  return true;
 }
 
 export function wait(msTime) {

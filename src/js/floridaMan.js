@@ -1,9 +1,9 @@
-import documentCache from "./documentSifter.js";
+import getDocumentData from "./documentSifter.js";
 import * as config from "./config.js";
 
 export default function makeFloridaManTan(nickname) {
 
-  const {titleSpans, paragraphs} = documentCache.getDocumentNodes({titleSpans: true, paragraphs: true});
+  const {titleSpans, paragraphs} = getDocumentData({titleSpans: true, paragraphs: true});
 
   for (let node of [...titleSpans, ...paragraphs])
     replaceParagraphText(node, config.TRUMP_REGEX, capitalizeWords(nickname));
