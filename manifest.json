@@ -1,9 +1,9 @@
 {
   "manifest_version": 2,
  
-  "name": "Support the New York Times -- Or Not",
+  "name": "Support the New York Times",
   "version": "1.0",
-  "description": "Not really, screw the paywall",
+  "description": "If you can afford to do so.  Otherwise use this extension to remove the paywall.",
  
   "content_scripts": [{
     "js": ["content_script.js"],
