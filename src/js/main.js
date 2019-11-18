@@ -5,23 +5,18 @@ import {
   enhanceSubtitles} from "./features/index.js";
 
 export function main() {
-
-  (function getOptions() {
-    return new Promise(function(resolve) {
-      chrome.storage.sync.get({
-        payWallOption: true,
-        adRemovalOption: true,
-        trumpOption: true,
-        trumpNameOption: 'florida man',
-        yoSuffixOption: 'Yo',
-        yoHeaderOption: true
-      }, resolve)
-    });
-  })()
-  .then(executeOptions);
+  getSavedOptions()
+  .then(executeThem);
 }
 
-function executeOptions({payWallOption, adRemovalOption, trumpOption, trumpNameOption, yoHeaderOption, yoSuffixOption}) {
+function executeThem(options) {
+  const {
+    payWallOption,
+    adRemovalOption,
+    trumpOption,
+    trumpNameOption,
+    yoHeaderOption,
+    yoSuffixOption} = options;
 
   if (payWallOption)
     destroyPaywall();
@@ -34,6 +29,17 @@ function executeOptions({payWallOption, adRemovalOption, trumpOption, trumpNameO
 
   if (adRemovalOption)
     removeAds();
-
 }
 
+function getSavedOptions() {
+  return new Promise(function(resolve) {
+    chrome.storage.sync.get({
+      payWallOption: true,
+      adRemovalOption: true,
+      trumpOption: true,
+      trumpNameOption: 'florida man',
+      yoSuffixOption: 'Yo',
+      yoHeaderOption: true
+    }, resolve)
+  });
+}

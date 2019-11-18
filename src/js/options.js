@@ -25,9 +25,9 @@ function save_options() {
     payWallOption: payWallOption.checked,
     adRemovalOption: adRemovalOption.checked,
     trumpOption: trumpOption.checked,
-    trumpNameOption: trumpNameOption.value,
+    trumpNameOption: trumpNameOption.value.toLowerCase,
     yoHeaderOption: yoHeaderOption.checked,
-    yoSuffixOption: yoSuffixOption.value,
+    yoSuffixOption: yoSuffixOption.value.toLowerCase,
   }, function() {
     closeButton.setAttribute('disabled','disabled');
     statusSpan.textContent = 'Options saved...';
@@ -48,7 +48,7 @@ function restore_options() {
     trumpOption: true,
     trumpNameOption: 'florida man',
     yoHeaderOption: true,
-    yoSuffixOption: 'Yo'
+    yoSuffixOption: 'yo'
   }, function(items) {
     payWallOption.checked = items.payWallOption;
     adRemovalOption.checked = items.adRemovalOption;
