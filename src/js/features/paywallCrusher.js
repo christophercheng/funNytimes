@@ -1,4 +1,4 @@
-import getDocumentData, {NODE_BODY, NODE_ARTICLE, NODE_PAYWALL} from "./documentSifter.js";
+import getDocumentData, {NODE_BODY, NODE_ARTICLE, NODE_PAYWALL, NODE_ARTICLE_HEADER_NAV} from "./documentSifter.js";
 
 export const MAX_SEARCH_ATTEMPTS = 8;
 export const MS_BETWEEN_SEARCH_ATTEMPTS = 500;
@@ -35,13 +35,16 @@ function findAndDestroyPaywall() {
   if (!paywall)
     return false;
   paywall.parentNode.removeChild(paywall);
-  const {body, article} = getDocumentData({[NODE_BODY]: true,[NODE_ARTICLE]: true});
-  body.prepend(article);
+  const {body, article, articleHeaderNav} = getDocumentData({
+    [NODE_BODY]: true,
+    [NODE_ARTICLE]: true,
+    [NODE_ARTICLE_HEADER_NAV]: true});
+  body.prepend(articleHeaderNav, article);
   return true;
 }
 
 export function wait(msTime) {
-  return new Promise(function(resolve,reject) {
+  return new Promise(function(resolve) {
     setTimeout(resolve, msTime);
   });
 };

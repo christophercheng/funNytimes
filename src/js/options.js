@@ -25,9 +25,9 @@ function save_options() {
     payWallOption: payWallOption.checked,
     adRemovalOption: adRemovalOption.checked,
     trumpOption: trumpOption.checked,
-    trumpNameOption: trumpNameOption.value.toLowerCase,
+    trumpNameOption: trumpNameOption.value.toLowerCase(),
     yoHeaderOption: yoHeaderOption.checked,
-    yoSuffixOption: yoSuffixOption.value.toLowerCase,
+    yoSuffixOption: yoSuffixOption.value.toLowerCase(),
   }, function() {
     closeButton.setAttribute('disabled','disabled');
     statusSpan.textContent = 'Options saved...';
@@ -53,8 +53,8 @@ function restore_options() {
     payWallOption.checked = items.payWallOption;
     adRemovalOption.checked = items.adRemovalOption;
     trumpOption.checked = items.trumpOption;
-    trumpNameOption.value = items.trumpNameOption.slice(0,25).toLowerCase();
-    yoSuffixOption.value = items.yoSuffixOption.slice(0,25).toLowerCase();
+    trumpNameOption.value = items.trumpNameOption.slice(0,30).toLowerCase();
+    yoSuffixOption.value = items.yoSuffixOption.slice(0,30).toLowerCase();
     yoHeaderOption.checked = items.yoHeaderOption;
     closeButton.addEventListener("click", function() {save_options()});
     closeButton.removeAttribute('disabled');

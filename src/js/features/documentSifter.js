@@ -3,8 +3,9 @@ export const NODE_ADS = "ads";
 export const NODE_PARAGRAPHS = "paragraphs";
 export const NODE_TITLE_SPANS = "titleSpans";
 export const NODE_ARTICLE = "article";
+export const NODE_ARTICLE_HEADER_NAV = "articleHeaderNav";
 export const NODE_HEADER_TITLES="headerTitles";
-export const NODE_PAYWALL="paywall"
+export const NODE_PAYWALL="paywall";
 
 export default (function() {
 
@@ -33,6 +34,7 @@ export default (function() {
 const FetchFnMapper = {
   [NODE_BODY]: fetchBody,
   [NODE_ARTICLE]: fetchArticle,
+  [NODE_ARTICLE_HEADER_NAV]: fetchArticleHeaderNav,
   [NODE_PAYWALL]: fetchPaywall,
   [NODE_PARAGRAPHS]: fetchParagraphs,
   [NODE_ADS]: fetchAds,
@@ -59,9 +61,18 @@ function fetchArticle(cachedData) {
   const updatedCache = getUpdatedCacheWith(NODE_BODY, cachedData);
   return {
     ...updatedCache,
-    [NODE_ARTICLE]: document.getElementsByTagName(NODE_ARTICLE)[0]
+    [NODE_ARTICLE]: updatedCache[NODE_BODY].getElementsByTagName("main")[0]
   }
 };
+
+function fetchArticleHeaderNav(cachedData) {
+  const appDiv = document.getElementById('app');
+  const targetDiv = appDiv.children[0].children[0].children[0];
+  return {
+    ...cachedData,
+    [NODE_ARTICLE_HEADER_NAV]: targetDiv
+  }
+}
 
 function fetchPaywall(cachedData) {
   return {
