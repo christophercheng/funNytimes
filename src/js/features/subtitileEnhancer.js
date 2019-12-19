@@ -1,7 +1,7 @@
-import getDocumentData from "./documentSifter/index.js";
+import getDocumentData, {NODE_HEADER_TITLES} from "./documentSifter/index.js";
 
 export default function yoTheHeader(suffix) {
-  const {headerTitles} = getDocumentData({headerTitles: true});
+  const {headerTitles} = getDocumentData({[NODE_HEADER_TITLES]: true});
 
   if (!headerTitles.length)
     return;

@@ -1,10 +1,10 @@
-import getDocumentData from "./documentSifter/index.js";
+import getDocumentData, {NODE_TITLE_SPANS, NODE_PARAGRAPHS} from "./documentSifter/index.js";
 
 export const TRUMP_REGEX = new RegExp("(mr. )?(president )?(donald )?(trump)", "gi");
 
 export default function makeFloridaManTan(nickname) {
 
-  const {titleSpans, paragraphs} = getDocumentData({titleSpans: true, paragraphs: true});
+  const {titleSpans, paragraphs} = getDocumentData({[NODE_TITLE_SPANS]: true, [NODE_PARAGRAPHS]: true});
 
   for (let node of [...titleSpans, ...paragraphs])
     replaceParagraphText(node, TRUMP_REGEX, capitalizeWords(nickname));
