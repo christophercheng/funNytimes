@@ -4,8 +4,9 @@ export const TRUMP_REGEX = new RegExp("(mr. )?(president )?(donald )?(trump)", "
 
 export default function makeFloridaManTan(nickname) {
 
-  const {titleSpans, paragraphs} = getDocumentData({[NODE_TITLE_SPANS]: true, [NODE_PARAGRAPHS]: true});
-
+  const documentData = getDocumentData({[NODE_TITLE_SPANS]: true, [NODE_PARAGRAPHS]: true});
+  const titleSpans = documentData[NODE_TITLE_SPANS];
+  const paragraphs = documentData[NODE_PARAGRAPHS];
   for (let node of [...titleSpans, ...paragraphs])
     replaceParagraphText(node, TRUMP_REGEX, capitalizeWords(nickname));
 }

@@ -1,4 +1,10 @@
-import getDocumentData, {NODE_BODY, NODE_ARTICLE, NODE_PAYWALL, NODE_ARTICLE_HEADER_NAV} from "./documentSifter/index.js";
+import getDocumentData,
+{
+  NODE_BODY,
+  NODE_ARTICLE,
+  NODE_PAYWALL,
+  NODE_ARTICLE_HEADER_NAV
+} from "./documentSifter/index.js";
 
 export const MAX_SEARCH_ATTEMPTS = 8;
 export const MS_BETWEEN_SEARCH_ATTEMPTS = 500;
@@ -21,26 +27,39 @@ export default function()
 
     wait((numPreviousAttempts === 0) ? 0 : msBetweenAttempts)
     .then(function() {
-      if (!findAndDestroyPaywall())
+      const paywall = findPaywall();
+      if (!paywall)
         rinseAndRepeat({
           ...options,
           numPreviousAttempts: numPreviousAttempts + 1
         });
+      else {
+        destroy(paywall);
+        liftArticle();
+      }
     });    
   })();
 }
 
-function findAndDestroyPaywall() {
-  let {paywall} = getDocumentData({[NODE_PAYWALL]: true});
-  if (!paywall)
-    return false;
+function findPaywall() {
+  let documentData = getDocumentData({[NODE_PAYWALL]: true});
+  return documentData[NODE_PAYWALL];
+}
+
+function destroy(paywall) {
   paywall.parentNode.removeChild(paywall);
-  const {body, article, articleHeaderNav} = getDocumentData({
+}
+
+function liftArticle() {
+  let documentData = getDocumentData({
     [NODE_BODY]: true,
     [NODE_ARTICLE]: true,
     [NODE_ARTICLE_HEADER_NAV]: true});
+  const body = documentData[NODE_BODY];
+  const article = documentData[NODE_ARTICLE];
+  const articleHeaderNav = documentData[NODE_ARTICLE_HEADER_NAV];
+  
   body.prepend(articleHeaderNav, article);
-  return true;
 }
 
 export function wait(msTime) {
