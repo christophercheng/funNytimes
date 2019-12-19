@@ -7,29 +7,12 @@ export const NODE_ARTICLE_HEADER_NAV = "articleHeaderNav";
 export const NODE_HEADER_TITLES="headerTitles";
 export const NODE_PAYWALL="paywall";
 
-export default (function() {
-
-  let currentPage;
-  let cachedDocumentData = {};
-
-  function getDocumentData(requestedNodes={}) {
-
-    (function resetCacheIfNewPage() {
-      if (currentPage != window.location.href) {
-        currentPage = window.location.href,
-        cachedDocumentData = { isArticlePage: currentPage.includes('.html') };
-      }
-    })();  
-
-    Object.keys(requestedNodes).forEach(function(requestedNode) {
-      cachedDocumentData = getUpdatedCacheWith(requestedNode, cachedDocumentData);
-    });
-    
-    return cachedDocumentData; // return everything and let the caller destructure and get what the way
-  }
-  
-  return getDocumentData;
-})();
+// getDocumentData always fetches data directly from document // and not cache
+export default function getUpdatedCacheWith(requestedNode, cachedData) {
+  return (requestedNode in cachedData)
+    ? cachedData
+    : FetchFnMapper[requestedNode](cachedData);
+}
 
 const FetchFnMapper = {
   [NODE_BODY]: fetchBody,
@@ -40,14 +23,6 @@ const FetchFnMapper = {
   [NODE_ADS]: fetchAds,
   [NODE_TITLE_SPANS]: fetchTitleSpans,
   [NODE_HEADER_TITLES]: fetchHeaderTitles
-}
-
-
-// getDocumentData always fetches data directly from document // and not cache
-function getUpdatedCacheWith(requestedNode, cachedData) {
-  return (requestedNode in cachedData)
-    ? cachedData
-    : FetchFnMapper[requestedNode](cachedData);
 }
 
 function fetchBody(cachedData) {

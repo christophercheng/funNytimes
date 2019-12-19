@@ -1,4 +1,4 @@
-import getDocumentData from "./documentSifter.js";
+import getDocumentData from "./documentSifter/index.js";
 
 export const TRUMP_REGEX = new RegExp("(mr. )?(president )?(donald )?(trump)", "gi");
 

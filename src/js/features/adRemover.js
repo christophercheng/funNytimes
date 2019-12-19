@@ -1,4 +1,4 @@
-import getDocumentData from "./documentSifter.js";
+import getDocumentData from "./documentSifter/index.js";
 
 export default function removeAds() {
   if (!getDocumentData().isArticlePage)

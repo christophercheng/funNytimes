@@ -1,4 +1,4 @@
-import getDocumentData, {NODE_BODY, NODE_ARTICLE, NODE_PAYWALL, NODE_ARTICLE_HEADER_NAV} from "./documentSifter.js";
+import getDocumentData, {NODE_BODY, NODE_ARTICLE, NODE_PAYWALL, NODE_ARTICLE_HEADER_NAV} from "./documentSifter/index.js";
 
 export const MAX_SEARCH_ATTEMPTS = 8;
 export const MS_BETWEEN_SEARCH_ATTEMPTS = 500;
