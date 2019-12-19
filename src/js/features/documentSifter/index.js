@@ -6,8 +6,10 @@ export {
   NODE_ARTICLE,
   NODE_ARTICLE_HEADER_NAV,
   NODE_HEADER_TITLES,
-  NODE_PAYWALL 
+  NODE_PAYWALL,
 } from "./documentCache.js";
+
+export const IS_ARTICLE_PAGE = "isArticlePage"
 
 import getUpdatedCacheWith from "./documentCache.js";
 
@@ -16,20 +18,27 @@ export default (function createClosure() {
   let currentPage;
   let cachedDocumentData = {};
 
-  return function getDocumentData(requestedNodes={}) {
+  return function getDocumentData(requestedNodes=[]) {
 
-    (function resetCacheIfNewPage() {
-      if (currentPage != window.location.href) {
-        currentPage = window.location.href,
-        cachedDocumentData = { isArticlePage: currentPage.includes('.html') };
-      }
-    })();  
+    if (isNewPage())
+      resetCache();
 
-    Object.keys(requestedNodes).forEach(function(requestedNode) {
+    const results = [];
+    requestedNodes.forEach(function(requestedNode) {
       cachedDocumentData = getUpdatedCacheWith(requestedNode, cachedDocumentData);
+      results.push(cachedDocumentData[requestedNode])
     });
     
-    return cachedDocumentData; // return everything and let the caller destructure and get what the way
+    return results; // return everything and let the caller destructure and get what the way
+  }
+
+  function isNewPage() {
+    return currentPage != window.location.href;
+  }
+
+  function resetCache() {
+    currentPage = window.location.href,
+    cachedDocumentData = { [IS_ARTICLE_PAGE]: currentPage.includes('.html') };
   }
   
 })();

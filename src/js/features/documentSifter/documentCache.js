@@ -5,7 +5,7 @@ export const NODE_TITLE_SPANS = "titleSpans";
 export const NODE_ARTICLE = "article";
 export const NODE_ARTICLE_HEADER_NAV = "articleHeaderNav";
 export const NODE_HEADER_TITLES = "headerTitles";
-export const NODE_PAYWALL=  "paywall";
+export const NODE_PAYWALL = "paywall";
 
 // getDocumentData always fetches data directly from document // and not cache
 export default function getUpdatedCacheWith(requestedNode, cachedData) {

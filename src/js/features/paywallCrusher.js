@@ -1,9 +1,9 @@
-import getDocumentData,
-{
+import getDocumentData, {
   NODE_BODY,
   NODE_ARTICLE,
   NODE_PAYWALL,
-  NODE_ARTICLE_HEADER_NAV
+  NODE_ARTICLE_HEADER_NAV,
+  IS_ARTICLE_PAGE
 } from "./documentSifter/index.js";
 
 export const MAX_SEARCH_ATTEMPTS = 8;
@@ -12,7 +12,7 @@ export const MS_BETWEEN_SEARCH_ATTEMPTS = 500;
 
 export default function() 
 {
-  if (!getDocumentData().isArticlePage)
+  if (!getDocumentData([IS_ARTICLE_PAGE])[0])
     return; // don't remove ads on home page right now
 
   (function rinseAndRepeat(options={}) { 
@@ -42,7 +42,7 @@ export default function()
 }
 
 function findPaywall() {
-  return getDocumentData({[NODE_PAYWALL]: true})[NODE_PAYWALL];
+  return getDocumentData([NODE_PAYWALL])[0];
 }
 
 function destroy(paywall) {
@@ -50,14 +50,11 @@ function destroy(paywall) {
 }
 
 function liftArticle() {
-  let documentData = getDocumentData({
-    [NODE_BODY]: true,
-    [NODE_ARTICLE]: true,
-    [NODE_ARTICLE_HEADER_NAV]: true});
-  const body = documentData[NODE_BODY];
-  const article = documentData[NODE_ARTICLE];
-  const articleHeaderNav = documentData[NODE_ARTICLE_HEADER_NAV];
-  
+  const [body, article, articleHeaderNav] = getDocumentData([
+    NODE_BODY,
+    NODE_ARTICLE,
+    NODE_ARTICLE_HEADER_NAV
+  ]);
   body.prepend(articleHeaderNav, article);
 }
 
