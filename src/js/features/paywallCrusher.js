@@ -42,8 +42,7 @@ export default function()
 }
 
 function findPaywall() {
-  let documentData = getDocumentData({[NODE_PAYWALL]: true});
-  return documentData[NODE_PAYWALL];
+  return getDocumentData({[NODE_PAYWALL]: true})[NODE_PAYWALL];
 }
 
 function destroy(paywall) {
